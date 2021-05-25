@@ -14,7 +14,7 @@ vks = vk.get_api()
 admin_id = '278386986'
 
 # инструкция:
-with open('README.txt') as tutorial_file:
+with open('README.txt', encoding="cp1251") as tutorial_file:
     tutorial = ''.join(tutorial_file.readlines())
 
 # темы для формул:
@@ -27,14 +27,20 @@ themes = ['Кинематика', 'Динамика', 'Статика', 'Зак�
 # все формулы:
 formulas = []
 sp_themes = []
-for theme in themes:
-    sp = {}
-    with open('Формулы\\{}.csv'.format(theme), encoding="utf-8-sig") as csv_file:
-        data = csv.DictReader(csv_file, delimiter=";", quotechar="'")
-        for i in data:
-            sp[i['id'] + ')' + i['name']] = i['photo']
-        formulas.append(sp)
-        sp_themes.append([x for x in sp])
+
+
+def grep_formulas():
+    for theme in themes:
+        sp = {}
+        with open('Формулы/{}.csv'.format(theme), encoding="utf-8-sig") as csv_file:
+            data = csv.DictReader(csv_file, delimiter=";", quotechar="'")
+            for i in data:
+                sp[i['id'] + ')' + i['name']] = i['photo']
+            formulas.append(sp)
+            sp_themes.append([x for x in sp])
+
+
+grep_formulas()  # оформил в виде функции, чтобы потом обновлять список возможных формул
 
 # темы для законов:
 themes2 = ['Закон сохранения и превращения энергии', 'Механика',
@@ -48,7 +54,7 @@ sp_themes2 = []
 for law in themes2[1:-1]:
     lt = []
     laws_2 = {}
-    with open('Законы\\{}.csv'.format(law)) as csv_file:
+    with open('Законы/{}.csv'.format(law)) as csv_file:
         info = csv.DictReader(csv_file, delimiter=";", quotechar="'")
         for i in info:
             laws['15.' + i['id'] + ')' + i['name']] = i['photo']
@@ -67,26 +73,26 @@ def send_msg(vk_session, id_type, iid, message=None, attachment=None, keyboard=N
 # начальная клавиатура:
 def main_keyboard():
     keyboard = VkKeyboard(one_time=False)
-    keyboard.add_button('Формулы', color=VkKeyboardColor.DEFAULT)
+    keyboard.add_button('Формулы', color=VkKeyboardColor.SECONDARY)
     keyboard.add_line()
-    keyboard.add_button('Справочные материалы', color=VkKeyboardColor.DEFAULT)
+    keyboard.add_button('Справочные материалы', color=VkKeyboardColor.SECONDARY)
     keyboard.add_line()
-    keyboard.add_button('Законы', color=VkKeyboardColor.DEFAULT)
+    keyboard.add_button('Законы', color=VkKeyboardColor.SECONDARY)
     keyboard.add_line()
-    keyboard.add_button('Лекции', color=VkKeyboardColor.DEFAULT)
+    keyboard.add_button('Лекции', color=VkKeyboardColor.SECONDARY)
     return keyboard.get_keyboard()
 
 
 # клавиатура с темами для формул:
 def get_formules():
     keyboard = VkKeyboard(one_time=False)
-    keyboard.add_button(themes[0], color=VkKeyboardColor.DEFAULT)
-    keyboard.add_button(themes[1], color=VkKeyboardColor.DEFAULT)
-    keyboard.add_button(themes[2], color=VkKeyboardColor.DEFAULT)
+    keyboard.add_button(themes[0], color=VkKeyboardColor.SECONDARY)
+    keyboard.add_button(themes[1], color=VkKeyboardColor.SECONDARY)
+    keyboard.add_button(themes[2], color=VkKeyboardColor.SECONDARY)
     keyboard.add_line()
-    keyboard.add_button(themes[3], color=VkKeyboardColor.DEFAULT)
+    keyboard.add_button(themes[3], color=VkKeyboardColor.SECONDARY)
     keyboard.add_line()
-    keyboard.add_button(themes[4], color=VkKeyboardColor.DEFAULT)
+    keyboard.add_button(themes[4], color=VkKeyboardColor.SECONDARY)
     keyboard.add_line()
     keyboard.add_button(themes[5], color=VkKeyboardColor.POSITIVE)
     keyboard.add_button(themes[6], color=VkKeyboardColor.POSITIVE)
@@ -102,7 +108,7 @@ def get_formules():
     keyboard.add_line()
     keyboard.add_button(themes[12], color=VkKeyboardColor.NEGATIVE)
     keyboard.add_line()
-    keyboard.add_button(themes[13], color=VkKeyboardColor.DEFAULT)
+    keyboard.add_button(themes[13], color=VkKeyboardColor.SECONDARY)
     return keyboard.get_keyboard()
 
 
@@ -123,10 +129,10 @@ def get_photos(file_theme):
         if id_counter == 3:
             id_counter = 0
             keyboard.add_line()
-            keyboard.add_button(ids, color=VkKeyboardColor.DEFAULT)
+            keyboard.add_button(ids, color=VkKeyboardColor.SECONDARY)
         else:
             id_counter += 1
-            keyboard.add_button(ids, color=VkKeyboardColor.DEFAULT)
+            keyboard.add_button(ids, color=VkKeyboardColor.SECONDARY)
 
     return keyboard.get_keyboard()
 
@@ -134,15 +140,15 @@ def get_photos(file_theme):
 # клавиатура с темами для законов:
 def get_laws():
     keyboard = VkKeyboard(one_time=False)
-    keyboard.add_button(themes2[0], color=VkKeyboardColor.DEFAULT)
+    keyboard.add_button(themes2[0], color=VkKeyboardColor.SECONDARY)
     keyboard.add_line()
-    keyboard.add_button(themes2[1], color=VkKeyboardColor.DEFAULT)
+    keyboard.add_button(themes2[1], color=VkKeyboardColor.SECONDARY)
     keyboard.add_line()
     keyboard.add_button(themes2[2], color=VkKeyboardColor.POSITIVE)
     keyboard.add_line()
     keyboard.add_button(themes2[3], color=VkKeyboardColor.PRIMARY)
     keyboard.add_line()
-    keyboard.add_button(themes2[4], color=VkKeyboardColor.DEFAULT)
+    keyboard.add_button(themes2[4], color=VkKeyboardColor.SECONDARY)
     keyboard.add_line()
     keyboard.add_button(themes2[5], color=VkKeyboardColor.NEGATIVE)
     return keyboard.get_keyboard()
@@ -157,26 +163,27 @@ def get_law(num):
         if id_counter == 3:
             id_counter = 0
             keyboard.add_line()
-            keyboard.add_button('15.' + str(iid), color=VkKeyboardColor.DEFAULT)
+            keyboard.add_button('15.' + str(iid), color=VkKeyboardColor.SECONDARY)
         else:
             id_counter += 1
-            keyboard.add_button('15.' + str(iid), color=VkKeyboardColor.DEFAULT)
+            keyboard.add_button('15.' + str(iid), color=VkKeyboardColor.SECONDARY)
 
     return keyboard.get_keyboard()
 
 
-'''# функция добавления новой формулы:
-def add_formula(out, line):
-    with open(f'Формулы\\{out}.csv', 'wb') as file:
-        writer = csv.writer(file, delimiter=";", quotechar="'")
-        writer.writerow(line.split(';'))'''
+# функция добавления новой формулы:
+def add_formula(csv_file_name, csv_line):
+    with open(f'Формулы/{csv_file_name}.csv', 'a', newline='', encoding='utf-8-sig') as file:
+        writer = csv.writer(file, delimiter=";")
+        writer.writerow(csv_line)
 
 
 # напоминание:
 remind = 'Чтобы вернуться, отправь боту "+".'
 
+
 # текст и фото в сообщениях:
-while True:
+def main():
     for sms in api.listen():
         if sms.type == VkEventType.MESSAGE_NEW:
             msg = sms.text
@@ -195,6 +202,8 @@ while True:
             # запрос на добавление новых формул:
             elif '!' in msg and len(msg) > 1:
                 if msg[0] == '!':
+                    send_msg(vk, 'user_id', sms.user_id,
+                             message="Запрос обработан.")
                     vks.messages.send(peer_id=admin_id, random_id=0,
                                       message=f'запрос от пользователя({full_name}) -> {msg}')
 
@@ -242,13 +251,23 @@ while True:
                 f2 = int(msg[msg.index('.') + 1:]) - 1
                 # Если требуются формулы:
                 if f1 < 14:
-                    send_msg(vk, 'user_id', sms.user_id, attachment=formulas[f1][sp_themes[f1][f2]])
+                    try:
+                        send_msg(vk, 'user_id', sms.user_id, attachment=formulas[f1][sp_themes[f1][f2]])
+                    except IndexError:
+                        print("[REMINDER]: добавилась формула")
                 # Если требуются законы:
                 elif f1 == 14:
                     send_msg(vk, 'user_id', sms.user_id, attachment=laws[[y for y in laws][f2]])
                 send_msg(vk, 'user_id', sms.user_id, message=remind)
 
-            '''# admin_add (out) -> (line)
-            elif msg.startswith('admin_add'):
-                add_formula(msg[11:msg.index(')')], msg[msg.index('>') + 3:-1])
-                print('ok')'''
+            # /add_formula (csv_file_name) -> (csv_line)
+            # 'id';'name';'photo'
+            # id смотреть по клавиатуре
+            elif msg.startswith('/add_formula') and str(sms.user_id) == admin_id:
+                add_formula(msg[14:msg.index(')')], msg[msg.index(')') + 9:-1].split(";"))
+                grep_formulas()
+                print("[REMINDER]: добавилась формула")
+
+
+if __name__ == "__main__":
+    main()
